@@ -13,7 +13,7 @@ from src.texto import modelos
 
 def _produto(**extra):
     base = dict(id="abc123", nome="Fone Bluetooth", preco=129.9, link="https://loja.teste/p1",
-                foto="https://loja.teste/f1.jpg", comissao=12.0)
+                foto="https://loja.teste/f1.jpg", comissao=12.0, categoria="")
     base.update(extra)
     return Produto(**base)
 
@@ -88,6 +88,8 @@ class Historia(unittest.TestCase):
             h.registrar(p, "telegram", "ok", "1")
             h.registrar(p, "facebook", "incerto", "sem resposta")  # incerto conta: nunca duplicar
             self.assertEqual(h.postados_recentes(30), {"abc123"})
+            self.assertEqual(h.postados_recentes(30, "telegram"), {"abc123"})
+            self.assertEqual(h.postados_recentes(30, "instagram"), set())  # ainda não saiu lá
             self.assertEqual(h.produtos_postados_hoje(), 1)
             self.assertEqual(h.posts_hoje_na_rede("telegram"), 1)
             self.assertEqual(h.posts_hoje_na_rede("instagram"), 0)
@@ -119,7 +121,11 @@ class Textos(unittest.TestCase):
     def test_todo_post_tem_link_preco_e_aviso(self):
         for rede in ("telegram", "facebook", "instagram"):
             texto = modelos.montar(_produto(), rede)
-            self.assertIn("https://loja.teste/p1", texto)
+            if rede == "instagram":
+                self.assertIn("link da bio", texto)
+                self.assertNotIn("https://", texto)
+            else:
+                self.assertIn("https://loja.teste/p1", texto)
             self.assertIn("R$ 129,90", texto)
             self.assertIn("Publicidade", texto)
 
@@ -136,6 +142,40 @@ class Textos(unittest.TestCase):
 
     def test_preco_formatado(self):
         self.assertEqual(modelos.formatar_preco(1299.9), "R$ 1.299,90")
+
+
+class Pagina(unittest.TestCase):
+    def test_agrupa_por_categoria_na_ordem_e_escapa_html(self):
+        from datetime import datetime
+        from src.pagina.gerador import gerar_html
+        agora = datetime(2026, 10, 31, 12, 0)
+        itens = [
+            (_produto(id="a", nome="Fone <b>X</b>", categoria="eletronicos"), datetime(2026, 10, 30)),
+            (_produto(id="b", nome="Panela", categoria="Casa"), datetime(2026, 10, 29)),
+            (_produto(id="c", nome="Sem categoria", categoria=""), datetime(2026, 10, 28)),
+        ]
+        pagina = gerar_html(itens, agora)
+        self.assertLess(pagina.index('id="c-casa"'), pagina.index('id="c-eletrônicos"'))
+        self.assertLess(pagina.index('id="c-eletrônicos"'), pagina.index('id="c-outros"'))
+        self.assertNotIn("<b>X</b>", pagina)       # texto da loja nunca vira HTML
+        self.assertIn("Fone &lt;b&gt;X&lt;/b&gt;", pagina)
+        self.assertIn("afiliado", pagina)          # aviso de publicidade na página
+        self.assertIn('rel="sponsored noopener"', pagina)
+
+    def test_pagina_vazia_nao_quebra(self):
+        from src.pagina.gerador import gerar_html
+        self.assertIn("Em breve", gerar_html([]))
+
+    def test_legenda_do_instagram_indica_a_secao(self):
+        self.assertIn("na seção Ferramentas", modelos.montar(_produto(categoria="ferramentas"), "instagram"))
+        self.assertNotIn("na seção", modelos.montar(_produto(categoria=""), "instagram"))
+
+    def test_categorias_apelidos(self):
+        from src.produtos.categorias import nome_da_categoria
+        self.assertEqual(nome_da_categoria("Eletrônicos"), "Eletrônicos")
+        self.assertEqual(nome_da_categoria("gamer"), "Gamers")
+        self.assertEqual(nome_da_categoria("dia-a-dia"), "Dia a dia")
+        self.assertEqual(nome_da_categoria(""), "Outros")
 
 
 class Seguranca(unittest.TestCase):

@@ -39,15 +39,28 @@ class Historico:
                 (produto.id, produto.nome, produto.link, rede, status, detalhe[:500], agora),
             )
 
-    def postados_recentes(self, dias: int) -> set:
+    def postados_recentes(self, dias: int, rede: str | None = None) -> set:
+        """Produtos já postados nos últimos `dias`. Com `rede`, olha só aquela rede."""
+        limite = (datetime.now(timezone.utc) - timedelta(days=dias)).isoformat()
+        marcas = ",".join("?" * len(STATUS_POSTADO))
+        filtro_rede, extra = ("AND rede = ?", (rede,)) if rede else ("", ())
+        with closing(self._conectar()) as con:
+            linhas = con.execute(
+                f"SELECT DISTINCT produto_id FROM posts WHERE status IN ({marcas}) AND quando >= ? {filtro_rede}",
+                (*STATUS_POSTADO, limite, *extra),
+            ).fetchall()
+        return {linha[0] for linha in linhas}
+
+    def postados_com_data(self, dias: int) -> dict:
+        """{produto_id: quando foi postado (mais recente)} dos últimos `dias`, em horário local."""
         limite = (datetime.now(timezone.utc) - timedelta(days=dias)).isoformat()
         marcas = ",".join("?" * len(STATUS_POSTADO))
         with closing(self._conectar()) as con:
             linhas = con.execute(
-                f"SELECT DISTINCT produto_id FROM posts WHERE status IN ({marcas}) AND quando >= ?",
+                f"SELECT produto_id, MAX(quando) FROM posts WHERE status IN ({marcas}) AND quando >= ? GROUP BY produto_id",
                 (*STATUS_POSTADO, limite),
             ).fetchall()
-        return {linha[0] for linha in linhas}
+        return {pid: datetime.fromisoformat(q).astimezone(self.fuso) for pid, q in linhas}
 
     def _inicio_do_dia_utc(self) -> str:
         agora = datetime.now(self.fuso)

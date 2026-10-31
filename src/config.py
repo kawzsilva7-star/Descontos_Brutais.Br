@@ -39,6 +39,7 @@ class Config:
     redes_ativas: list
     arquivo_produtos: Path
     arquivo_historico: Path
+    arquivo_pagina: Path
     telegram_token: str
     telegram_chat_id: str
     meta_page_id: str
@@ -71,6 +72,7 @@ def carregar_config(arquivo_env: Path | None = None) -> Config:
         redes_ativas=redes,
         arquivo_produtos=RAIZ / (pegar("ARQUIVO_PRODUTOS") or "dados/produtos.csv"),
         arquivo_historico=RAIZ / "dados" / "historico.db",
+        arquivo_pagina=RAIZ / "docs" / "index.html",
         telegram_token=pegar("TELEGRAM_BOT_TOKEN"),
         telegram_chat_id=pegar("TELEGRAM_CHAT_ID"),
         meta_page_id=pegar("META_PAGE_ID"),

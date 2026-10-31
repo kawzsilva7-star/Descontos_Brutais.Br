@@ -19,6 +19,11 @@ Outros comandos (sempre na pasta do projeto):
 - `-m src.main --rede telegram` usa só uma rede
 - `-m src.main --forcar` ignora o limite de posts do dia
 
+## Link da bio (página de produtos por categoria)
+O bot gera docs/index.html: uma página só sua, com os produtos postados nos últimos 30 dias separados por categoria (Casa, Dia a dia, Carro, Eletrônicos, Gamers, Ferramentas...). A categoria vem da coluna categoria da planilha. A legenda do Instagram manda o público para a seção certa.
+- Refazer a página: .venv\Scripts\python.exe -m src.main --gerar-pagina.
+- Ela só passa a valer na internet depois de publicada (GitHub Pages). Isso ainda não foi ligado.
+
 ## Regras que o bot segue
 - Máximo de 3 produtos por dia (`POSTS_POR_DIA`) e 1 post por dia no Instagram (`INSTAGRAM_POSTS_POR_DIA`, a conta é nova).
 - Não repete produto por 30 dias (`DIAS_SEM_REPETIR`). Se não souber se postou (rede não respondeu), conta como postado e **não** tenta de novo.
