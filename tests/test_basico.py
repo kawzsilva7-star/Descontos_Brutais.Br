@@ -166,9 +166,10 @@ class Pagina(unittest.TestCase):
         from src.pagina.gerador import gerar_html
         self.assertIn("Em breve", gerar_html([]))
 
-    def test_legenda_do_instagram_indica_a_secao(self):
-        self.assertIn("na seção Ferramentas", modelos.montar(_produto(categoria="ferramentas"), "instagram"))
-        self.assertNotIn("na seção", modelos.montar(_produto(categoria=""), "instagram"))
+    def test_legenda_do_instagram_manda_para_a_bio(self):
+        texto = modelos.montar(_produto(categoria="ferramentas"), "instagram")
+        self.assertIn("Clique no link da bio para comprar", texto)
+        self.assertNotIn("seção", texto)
 
     def test_categorias_apelidos(self):
         from src.produtos.categorias import nome_da_categoria

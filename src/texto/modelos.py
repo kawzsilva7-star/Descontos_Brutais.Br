@@ -1,8 +1,6 @@
 """Textos dos posts. Nada de inventar: só entram nome, preço e link informados pelo dono."""
 import hashlib
 
-from ..produtos.categorias import OUTROS, nome_da_categoria
-
 GANCHOS = [
     "Achado do dia:",
     "Separei este produto pra você:",
@@ -37,9 +35,7 @@ def _corpo(produto, rede: str) -> str:
     linhas.append(f"💰 Preço: {formatar_preco(produto.preco)} (pode mudar, confira na loja)")
     if rede == "instagram":
         # No Instagram o link da legenda não clica: manda o público para a página do link da bio.
-        secao = nome_da_categoria(produto.categoria)
-        onde = f", na seção {secao}" if secao != OUTROS else ""
-        linhas.append(f"🛒 Clique no link da bio para comprar{onde}")
+        linhas.append("🛒 Clique no link da bio para comprar")
     else:
         linhas.append(f"🛒 Compre aqui: {produto.link}")
     linhas += ["", AVISO]
