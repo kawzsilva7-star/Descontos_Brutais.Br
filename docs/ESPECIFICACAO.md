@@ -7,7 +7,7 @@ Um bot que roda sozinho, todo dia, e posta produtos do Mercado Livre com o link 
 
 ## Regras de negócio
 - **3 posts por dia**, um produto em cada: manhã, tarde e noite. Horários sugeridos: 08:00, 14:00 e 20:00 (fuso America/Sao_Paulo). Confirmar com o dono.
-- **Comissão mínima de 15%.** Produto abaixo disso não entra.
+- **Comissão mínima de 10%.** Produto abaixo disso não entra.
 - **Sem limite de preço.** O dono decidiu não limitar o preço. Deixar o limite como opção de configuração, vazia por padrão (vazio = sem limite), caso ele queira usar depois.
 - **Não repetir produto** por pelo menos 30 dias. Guardar histórico do que já foi postado.
 - **Cada post** tem: foto do produto, descrição curta escrita para vender, preço, e o link de afiliado.
@@ -26,7 +26,7 @@ Fase 2 (depois):
 
 ## Fluxo de cada execução
 1. Buscar produtos candidatos no Mercado Livre.
-2. Filtrar: comissão >= 15%, não postado nos últimos 30 dias, tem foto (e preço <= máximo, só se um máximo estiver configurado).
+2. Filtrar: comissão >= 10%, não postado nos últimos 30 dias, tem foto (e preço <= máximo, só se um máximo estiver configurado).
 3. Escolher 1 produto.
 4. Gerar o link de afiliado.
 5. Escrever a descrição.

@@ -10,3 +10,8 @@ node_modules/
 historico/*.db
 historico/*.json
 .DS_Store
+
+# Dados do bot (pessoais, nao vao para o GitHub)
+dados/produtos.csv
+dados/*.db
+logs/
