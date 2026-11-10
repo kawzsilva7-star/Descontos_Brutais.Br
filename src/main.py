@@ -24,9 +24,9 @@ from .texto import modelos
 
 REDES = {"telegram": telegram, "facebook": facebook, "instagram": instagram}
 log = logging.getLogger("bot")
-ULTIMOS_PARA_VARIAR = 4
+ULTIMOS_PARA_VARIAR = 4  # quantos posts recentes o bot olha para não repetir o mesmo tipo de produto
 # A página mostra tudo o que já foi postado (para tirar um produto, apague a linha dele da planilha).
-DIAS_NA_PAGINA = 3650  # quantos posts recentes o bot olha para não repetir o mesmo tipo de produto
+DIAS_NA_PAGINA = 3650
 
 
 class _EscondeSegredos(logging.Filter):
@@ -96,6 +96,47 @@ def testar_conexao(cfg) -> int:
     return 1 if falhou else 0
 
 
+def enviar_pagina_ao_github(cfg) -> None:
+    """Manda a página nova para o GitHub (o GitHub Pages publica sozinho em alguns minutos).
+
+    Só a página (docs/index.html) vai. Planilha, histórico e .env nunca são enviados.
+    Se falhar (sem internet, sem login no Git), só avisa: os posts já foram feitos.
+    """
+    import subprocess
+
+    pagina = cfg.arquivo_pagina.relative_to(RAIZ).as_posix()
+
+    def git(*args):
+        return subprocess.run(["git", *args], cwd=RAIZ, capture_output=True, text=True, timeout=90)
+
+    if not git("status", "--porcelain", "--", pagina).stdout.strip():
+        return
+    passos = [
+        ("add", "--", pagina),
+        ("commit", "-m", "Atualiza a página de produtos", "--", pagina),
+        ("push", "origin", "HEAD"),
+    ]
+    for passo in passos:
+        resultado = git(*passo)
+        if resultado.returncode != 0:
+            log.warning("Não consegui mandar a página ao GitHub (git %s falhou).", passo[0])
+            return
+    log.info("Página enviada ao GitHub. Em alguns minutos ela aparece no site.")
+
+
+def _atualizar_pagina(cfg, historico, caminho) -> None:
+    try:
+        gerar_pagina(cfg, historico, caminho)
+    except Exception as erro:  # a página nunca pode atrapalhar os posts
+        log.warning("Não consegui atualizar a página do link da bio (%s).", type(erro).__name__)
+        return
+    if not cfg.simular:
+        try:
+            enviar_pagina_ao_github(cfg)
+        except Exception as erro:
+            log.warning("Não consegui mandar a página ao GitHub (%s).", type(erro).__name__)
+
+
 def gerar_pagina(cfg, historico, caminho_produtos, saida: Path | None = None) -> int:
     """Refaz a página do link da bio com todos os produtos já postados que ainda estão na planilha."""
     produtos = {p.id: p for p in _carregar_produtos(cfg, caminho_produtos)}
@@ -160,10 +201,7 @@ def publicar(cfg, historico, caminho, so_rede: str | None, forcar: bool) -> int:
         return 0
     deu_certo = any(r in ("ok", "incerto") for r in resultados.values())
     if deu_certo:
-        try:
-            gerar_pagina(cfg, historico, caminho)
-        except Exception as erro:  # a página nunca pode atrapalhar os posts
-            log.warning("Não consegui atualizar a página do link da bio (%s).", type(erro).__name__)
+        _atualizar_pagina(cfg, historico, caminho)
     return 0 if deu_certo or not resultados else 1
 
 
@@ -192,10 +230,7 @@ def postar_atrasados(cfg, historico, caminho, quantidade: int) -> int:
             if _postar_numa_rede(cfg, historico, produto, rede, texto) in ("ok", "incerto"):
                 postou = True
     if postou:
-        try:
-            gerar_pagina(cfg, historico, caminho)
-        except Exception as erro:
-            log.warning("Não consegui atualizar a página do link da bio (%s).", type(erro).__name__)
+        _atualizar_pagina(cfg, historico, caminho)
     return 0 if postou or not tentou else 1
 
 
