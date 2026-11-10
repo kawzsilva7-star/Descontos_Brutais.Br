@@ -24,13 +24,5 @@ ideias-do-dono/
 videos/*
 !videos/LEIA-ME.md
 
-# Skills: so as 3 do dono vao para o GitHub publico. O resto (inclusive Remotion, de terceiros) fica so no PC.
-skills/*
-!skills/LEIA-ME.md
-!skills/04-video-e-imagem/
-skills/04-video-e-imagem/*
-!skills/04-video-e-imagem/video-de-produto/
-!skills/06-planejar-e-decidir/
-skills/06-planejar-e-decidir/*
-!skills/06-planejar-e-decidir/banca-de-avaliadores/
-!skills/06-planejar-e-decidir/rodada-de-tubaroes/
+# Skills (algumas foram pagas pelo dono): NUNCA vao para o GitHub publico do bot. Backup no repositorio privado Skills-para-o-Claude-.
+skills/
