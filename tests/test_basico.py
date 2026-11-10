@@ -193,6 +193,8 @@ class Pagina(unittest.TestCase):
             "Caminha Iglu para Cães": "Pet", "Coqueteleira Shaker Academia": "Academia",
             "Mouse Gamer RGB": "Gamer", "Guarda-chuva Automático": "Dia a dia",
             "Bolsa Térmica Marmita": "Bolsas", "Jogo 14 Potes Cozinha": "Cozinha",
+            "Saia Curta Godê": "Moda feminina", "Calça Masculina Tactel": "Moda masculina",
+            "Kit 15 Pares Meias": "Moda unissex", "Vestido Infantil Festa": "Infantil e família",
         }
         for nome, nicho in casos.items():
             self.assertEqual(nicho_do_produto(_produto(nome=nome, categoria="")), nicho, nome)

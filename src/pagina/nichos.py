@@ -32,9 +32,15 @@ NICHOS = [
                       "garrafa termica", "liquidificador"]),
     ("Beleza", "💄", ["unha*", "protetor solar", "aparador", "maquiagem", "cabelo*", "perfume*", "skincare",
                      "secador", "chapinha", "barbeador"]),
-    ("Moda", "👕", ["vestido*", "saia*", "calca*", "camiseta*", "camisa*", "cinto*", "meia*", "tenis", "relogio*",
-                   "top", "short*", "bermuda*", "jaqueta*", "blusa*", "moletom", "chinelo*", "sandalia*", "bone*"]),
+    # Infantil vem antes da moda: "vestido infantil" é infantil, não moda feminina.
     ("Infantil e família", "🧸", ["bebe", "infantil", "brinquedo*", "figurinha*", "crianca*", "boneca*"]),
+    # Moda: só vai para feminina/masculina se o anúncio disser. Sem dizer, fica em "Moda unissex" (não inventamos).
+    ("Moda feminina", "👗", ["feminin*", "vestido*", "saia*", "cropped", "biquini*", "sutia*", "calcinha*",
+                            "legging*", "cowgirl"]),
+    ("Moda masculina", "👔", ["masculin*", "cueca*"]),
+    ("Moda unissex", "👕", ["unissex", "calca*", "camiseta*", "camisa*", "cinto*", "meia*", "tenis", "relogio*",
+                           "top", "short*", "bermuda*", "jaqueta*", "blusa*", "moletom", "chinelo*", "sandalia*",
+                           "bone*"]),
     ("Ferramentas", "🔧", ["parafusadeira", "furadeira", "ferramenta*", "alicate", "chave de fenda", "trena"]),
     ("Dia a dia", "☂️", ["guarda-chuva", "guarda chuva", "garrafa*", "palmilha*", "squeeze", "organizador*"]),
     ("Casa", "🏠", ["ventilador*", "espelho*", "led*", "natal", "refletor*", "decoracao", "luminaria*", "cortina*",
@@ -46,7 +52,7 @@ NICHOS = [
 POR_CATEGORIA = {
     "saude": "Nutrição e saúde", "academia": "Academia", "esportes": "Academia", "gamer": "Gamer",
     "gamers": "Gamer", "eletronicos": "Eletrônicos", "pet": "Pet", "carro": "Carro e bike", "bolsas": "Bolsas",
-    "banho": "Banho", "cozinha": "Cozinha", "beleza": "Beleza", "moda": "Moda", "familia": "Infantil e família",
+    "banho": "Banho", "cozinha": "Cozinha", "beleza": "Beleza", "moda": "Moda unissex", "moda feminina": "Moda feminina", "moda masculina": "Moda masculina","familia": "Infantil e família",
     "ferramentas": "Ferramentas", "dia a dia": "Dia a dia", "casa": "Casa", "livros": "Livros",
 }
 
