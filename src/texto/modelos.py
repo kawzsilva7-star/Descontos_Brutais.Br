@@ -14,7 +14,8 @@ AVISO = "📢 Publicidade: link de afiliado, posso receber comissão pela sua co
 AVISO_SAUDE = "⚠️ Produto ligado à saúde: tome cuidado e consulte um médico antes de usar."
 # Além da categoria "saúde", estas palavras (sem acento) no nome ou na descrição também ativam o aviso.
 PALAVRAS_DE_SAUDE = ("pressao", "suplement", "creatina", "glutamina", "whey", "vitamina", "nasal", "ortoped",
-                     "protetor solar", "remedio", "medicamento", "cápsulas", "capsulas")
+                     "protetor solar", "remedio", "medicamento", "cápsulas", "capsulas",
+                     "soro", "nafazolina", "cloridrato", "descongestionante", "nariz")
 LIMITE_TELEGRAM = 1000  # o Telegram aceita 1024 na legenda de foto
 LIMITE_INSTAGRAM = 2000  # o Instagram aceita 2200
 

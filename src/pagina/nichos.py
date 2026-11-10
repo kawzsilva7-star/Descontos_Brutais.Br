@@ -13,27 +13,38 @@ OUTROS = ("Outros achados", "⭐")
 # Palavra terminada em * vale como começo de palavra (suplement* pega suplemento, suplementos...).
 NICHOS = [
     ("Nutrição e saúde", "💊", ["creatina", "whey", "glutamina", "biotina", "multivitamin*", "vitamina*", "suplement*",
-                               "psyllium", "fibra", "pressao", "oximetro", "termometro", "respiron", "nasal",
+                               "psyllium", "fibra", "pressao", "oximetro", "termometro", "respiron", "nasal", "nariz",
+                               "soro", "nafazolina", "cloridrato", "descongestionante", "medicamento*",
                                "ortoped*", "remedio*", "capsula*", "colageno"]),
+    # "elástico de cabelo" é beleza: por isso aqui só elásticos de treino.
     ("Academia", "🏋️", ["academia", "fitness", "shaker", "coqueteleira", "dryfit", "halter*", "treino", "yoga",
-                        "elastico*", "corda de pular"]),
+                        "extensor*", "faixa elastica", "mini band", "corda de pular"]),
     ("Gamer", "🎮", ["gamer", "game*", "headset", "console", "playstation", "xbox", "nintendo", "joystick"]),
     ("Acessórios para computador", "🖥️", ["mouse", "teclado", "notebook", "monitor", "webcam", "pendrive", "hub usb",
                                           "computador", "mousepad", "ssd"]),
+    ("Música", "🎸", ["guitarra*", "violao", "violoes", "ukulele", "cavaquinho", "contrabaixo", "instrumento musical",
+                     "instrumentos musicais", "partitura*"]),
     ("Eletrônicos", "📱", ["smartphone", "celular", "fone*", "camera", "tablet", "smartwatch", "caixa de som", "tv",
-                          "carregador", "power bank"]),
+                          "carregador", "power bank", "filtro de linha", "regua de energia", "estabilizador", "nobreak"]),
     ("Pet", "🐾", ["pet", "caes", "cao", "gatos", "gato", "cachorro*", "coleira", "racao", "arranhador"]),
     ("Carro e bike", "🚗", ["carro*", "moto", "motos", "bike", "bicicleta", "pneu*", "porta-malas", "automotiv*",
                            "veicular"]),
-    ("Bolsas", "👜", ["bolsa*", "mochila*", "lancheira", "carteira", "necessaire", "pochete"]),
+    ("Bolsas", "👜", ["bolsa*", "mochila*", "lancheira", "carteira", "necessaire", "pochete", "sacola*", "ecobag"]),
+    ("Limpeza", "🧽", ["limpeza", "lixeira*", "lixo", "papel higienico", "vassoura*", "rodo", "detergente*",
+                      "desinfetante*", "esponja*", "pano de chao", "balde*", "mop"]),
     ("Banho", "🛁", ["toalha*", "chuveiro", "banheiro", "banho", "roupao", "tapete de banheiro", "sabonete*"]),
     ("Cozinha", "🍳", ["cozinha", "panela*", "pote*", "tigela*", "ralador", "fatiador", "descascador", "processador",
                       "triturador", "tapioqueira", "frigideira*", "airfryer", "air fryer", "talher*", "copo*",
                       "garrafa termica", "liquidificador"]),
-    ("Beleza", "💄", ["unha*", "protetor solar", "aparador", "maquiagem", "cabelo*", "perfume*", "skincare",
-                     "secador", "chapinha", "barbeador"]),
+    # Beleza antes de ferramentas: "alicate de cutícula" é manicure, não ferramenta.
+    ("Beleza", "💄", ["unha*", "manicure", "cuticula", "esmalte*", "acetona", "protetor solar", "aparador",
+                     "maquiagem", "cabelo*", "pente*", "presilha*", "tiara*", "xuxinha*", "shampoo*",
+                     "condicionador*", "perfume*", "skincare", "hidratante*", "secador", "chapinha", "barbeador"]),
     # Infantil vem antes da moda: "vestido infantil" é infantil, não moda feminina.
     ("Infantil e família", "🧸", ["bebe", "infantil", "brinquedo*", "figurinha*", "crianca*", "boneca*"]),
+    # Bijuteria antes da moda: "colar feminino" é bijuteria.
+    ("Bijuterias e acessórios", "💍", ["bijuteria*", "joia*", "brinco*", "colar", "colares", "pulseira*", "anel",
+                                       "aneis", "pingente*", "tornozeleira*", "piercing*", "oculos"]),
     # Moda: só vai para feminina/masculina se o anúncio disser. Sem dizer, fica em "Moda unissex" (não inventamos).
     ("Moda feminina", "👗", ["feminin*", "vestido*", "saia*", "cropped", "biquini*", "sutia*", "calcinha*",
                             "legging*", "cowgirl"]),
@@ -41,10 +52,14 @@ NICHOS = [
     ("Moda unissex", "👕", ["unissex", "calca*", "camiseta*", "camisa*", "cinto*", "meia*", "tenis", "relogio*",
                            "top", "short*", "bermuda*", "jaqueta*", "blusa*", "moletom", "chinelo*", "sandalia*",
                            "bone*"]),
-    ("Ferramentas", "🔧", ["parafusadeira", "furadeira", "ferramenta*", "alicate", "chave de fenda", "trena"]),
+    ("Ferramentas e reforma", "🔧", ["parafusadeira", "furadeira", "ferramenta*", "alicate", "chave de fenda", "trena",
+                                     "torneira*", "tomada*", "prego*", "parafuso*", "janela*", "fechadura*",
+                                     "dobradica*", "porta de madeira", "porta de correr", "interruptor*", "disjuntor*",
+                                     "fita isolante", "cimento"]),
     ("Dia a dia", "☂️", ["guarda-chuva", "guarda chuva", "garrafa*", "palmilha*", "squeeze", "organizador*"]),
     ("Casa", "🏠", ["ventilador*", "espelho*", "led*", "natal", "refletor*", "decoracao", "luminaria*", "cortina*",
-                   "lampada*", "travesseiro*", "lencol"]),
+                   "lampada*", "travesseiro*", "lencol", "lencois", "coberta*", "cobertor*", "edredom", "manta*",
+                   "tapete*", "mesa*", "cadeira*", "sofa*", "estante*", "prateleira*", "caixa organizadora"]),
     ("Livros", "📚", ["livro*", "biblia"]),
 ]
 
@@ -53,7 +68,7 @@ POR_CATEGORIA = {
     "saude": "Nutrição e saúde", "academia": "Academia", "esportes": "Academia", "gamer": "Gamer",
     "gamers": "Gamer", "eletronicos": "Eletrônicos", "pet": "Pet", "carro": "Carro e bike", "bolsas": "Bolsas",
     "banho": "Banho", "cozinha": "Cozinha", "beleza": "Beleza", "moda": "Moda unissex", "moda feminina": "Moda feminina", "moda masculina": "Moda masculina","familia": "Infantil e família",
-    "ferramentas": "Ferramentas", "dia a dia": "Dia a dia", "casa": "Casa", "livros": "Livros",
+    "ferramentas": "Ferramentas e reforma", "reforma": "Ferramentas e reforma", "limpeza": "Limpeza", "musica": "Música", "bijuteria": "Bijuterias e acessórios", "bijuterias": "Bijuterias e acessórios", "acessorios": "Bijuterias e acessórios", "dia a dia": "Dia a dia", "casa": "Casa", "livros": "Livros",
 }
 
 EMOJI = {nome: emoji for nome, emoji, _ in NICHOS}

@@ -195,6 +195,10 @@ class Pagina(unittest.TestCase):
             "Bolsa Térmica Marmita": "Bolsas", "Jogo 14 Potes Cozinha": "Cozinha",
             "Saia Curta Godê": "Moda feminina", "Calça Masculina Tactel": "Moda masculina",
             "Kit 15 Pares Meias": "Moda unissex", "Vestido Infantil Festa": "Infantil e família",
+            "Colar Feminino Coração": "Bijuterias e acessórios", "Elástico de Cabelo Kit 10": "Beleza",
+            "Kit Manicure Alicate de Cutícula": "Beleza", "Papel Higiênico 12 rolos": "Limpeza",
+            "Torneira Gourmet": "Ferramentas e reforma", "Filtro de Linha 5 Tomadas": "Eletrônicos",
+            "Suporte para Guitarra": "Música", "Toalha de Rosto": "Banho", "Coberta Casal": "Casa",
         }
         for nome, nicho in casos.items():
             self.assertEqual(nicho_do_produto(_produto(nome=nome, categoria="")), nicho, nome)
