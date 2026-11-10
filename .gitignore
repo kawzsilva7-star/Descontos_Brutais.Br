@@ -24,9 +24,13 @@ ideias-do-dono/
 videos/*
 !videos/LEIA-ME.md
 
-# Skills: so as 3 do dono vao para o GitHub publico. As de Remotion (terceiros, licenca nao confirmada) ficam so no PC.
+# Skills: so as 3 do dono vao para o GitHub publico. O resto (inclusive Remotion, de terceiros) fica so no PC.
 skills/*
 !skills/LEIA-ME.md
-!skills/banca-de-avaliadores/
-!skills/rodada-de-tubaroes/
-!skills/video-de-produto/
+!skills/04-video-e-imagem/
+skills/04-video-e-imagem/*
+!skills/04-video-e-imagem/video-de-produto/
+!skills/06-planejar-e-decidir/
+skills/06-planejar-e-decidir/*
+!skills/06-planejar-e-decidir/banca-de-avaliadores/
+!skills/06-planejar-e-decidir/rodada-de-tubaroes/

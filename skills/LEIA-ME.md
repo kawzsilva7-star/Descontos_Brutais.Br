@@ -13,7 +13,10 @@ O dono pediu: **não carregar skill à toa**. Cada skill gasta tokens.
 5. Ao usar uma skill, diga ao dono qual e por quê, em uma linha.
 6. Skill nova só vai para o GitHub com autorização do dono, depois de conferir a licença e de procurar chaves ou dados pessoais nos arquivos.
 
-## Qual skill para qual função
+## Índice completo
+Há mais de 80 skills no PC (vindas dos repositórios `Pensamento-critico` e `72-skills-`). As skills estão separadas em **11 pastas por função** (`skills/01-marketing-e-anuncios/`, `skills/02-textos-e-vendas/` ... `skills/11-economia-de-tokens/`). A lista com o nome e para que serve cada uma está em `skills/INDICE.md` (só no PC). **Leia o índice só quando a tabela abaixo não resolver**, e depois abra apenas a skill escolhida.
+
+## Qual skill para qual função (as mais usadas neste bot; o caminho é `skills/<pasta da função>/<skill>/`)
 | Função | Skill | Quando usar |
 |---|---|---|
 | Vídeo curto do produto (Reels/Instagram) | `video-de-produto` | Quando o dono pedir vídeo de produto |
