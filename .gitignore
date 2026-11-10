@@ -15,3 +15,7 @@ historico/*.json
 dados/produtos.csv
 dados/*.db
 logs/
+
+dados/CONTINUACAO.md
+atualizacao-de-memoria/
+ideias-do-dono/

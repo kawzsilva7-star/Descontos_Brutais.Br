@@ -51,6 +51,21 @@ class Historico:
             ).fetchall()
         return {linha[0] for linha in linhas}
 
+    def ultimos_postados(self, quantos: int, rede: str = "telegram") -> list:
+        """Ids dos últimos `quantos` produtos postados na `rede`, do mais novo para o mais antigo.
+
+        O Telegram é a rede de origem: todo produto sai nele primeiro, então ele mostra a ordem real
+        dos posts (Facebook e Instagram em atraso não bagunçam essa lista).
+        """
+        marcas = ",".join("?" * len(STATUS_POSTADO))
+        with closing(self._conectar()) as con:
+            linhas = con.execute(
+                f"SELECT produto_id FROM posts WHERE status IN ({marcas}) AND rede = ? "
+                "GROUP BY produto_id ORDER BY MAX(quando) DESC LIMIT ?",
+                (*STATUS_POSTADO, rede, quantos),
+            ).fetchall()
+        return [linha[0] for linha in linhas]
+
     def postados_com_data(self, dias: int) -> dict:
         """{produto_id: quando foi postado (mais recente)} dos últimos `dias`, em horário local."""
         limite = (datetime.now(timezone.utc) - timedelta(days=dias)).isoformat()

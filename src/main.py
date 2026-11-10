@@ -6,6 +6,7 @@ Uso (na pasta do projeto):
     python -m src.main --testar-conexao confere as chaves sem postar nada
     python -m src.main --rede telegram  usa só uma rede
     python -m src.main --forcar         ignora o limite de posts do dia
+    python -m src.main --atrasados      posta no Facebook e no Instagram o que já saiu só no Telegram
 """
 import argparse
 import logging
@@ -23,6 +24,9 @@ from .texto import modelos
 
 REDES = {"telegram": telegram, "facebook": facebook, "instagram": instagram}
 log = logging.getLogger("bot")
+ULTIMOS_PARA_VARIAR = 4
+# A página mostra tudo o que já foi postado (para tirar um produto, apague a linha dele da planilha).
+DIAS_NA_PAGINA = 3650  # quantos posts recentes o bot olha para não repetir o mesmo tipo de produto
 
 
 class _EscondeSegredos(logging.Filter):
@@ -68,7 +72,8 @@ def _carregar_produtos(cfg, caminho: Path | None):
 
 def listar(cfg, historico, caminho) -> int:
     produtos = _carregar_produtos(cfg, caminho)
-    escolhido, excluidos = selecao.escolher(produtos, cfg, historico.postados_recentes(cfg.dias_sem_repetir))
+    escolhido, excluidos = selecao.escolher(produtos, cfg, historico.postados_recentes(cfg.dias_sem_repetir),
+                                            historico.ultimos_postados(ULTIMOS_PARA_VARIAR))
     log.info("%d produtos na lista. Próximo a ser postado: %s", len(produtos), escolhido.nome if escolhido else "nenhum")
     for produto, motivo in excluidos:
         log.info("  fora: %s -> %s", (produto.nome or produto.link)[:60], motivo)
@@ -92,9 +97,9 @@ def testar_conexao(cfg) -> int:
 
 
 def gerar_pagina(cfg, historico, caminho_produtos, saida: Path | None = None) -> int:
-    """Refaz a página do link da bio com os produtos postados nos últimos dias."""
+    """Refaz a página do link da bio com todos os produtos já postados que ainda estão na planilha."""
     produtos = {p.id: p for p in _carregar_produtos(cfg, caminho_produtos)}
-    datas = historico.postados_com_data(cfg.dias_sem_repetir)
+    datas = historico.postados_com_data(DIAS_NA_PAGINA)
     na_pagina = [(produtos[pid], quando) for pid, quando in datas.items() if pid in produtos]
     destino = gerador.escrever(saida or cfg.arquivo_pagina, na_pagina)
     log.info("Página do link da bio atualizada (%d produtos): %s", len(na_pagina), destino)
@@ -130,7 +135,8 @@ def publicar(cfg, historico, caminho, so_rede: str | None, forcar: bool) -> int:
         return 0
     produtos = _carregar_produtos(cfg, caminho)
     # Com --rede, só conta o que já saiu naquela rede (permite completar uma rede que ficou para trás).
-    produto, excluidos = selecao.escolher(produtos, cfg, historico.postados_recentes(cfg.dias_sem_repetir, so_rede))
+    produto, excluidos = selecao.escolher(produtos, cfg, historico.postados_recentes(cfg.dias_sem_repetir, so_rede),
+                                          historico.ultimos_postados(ULTIMOS_PARA_VARIAR))
     if not produto:
         log.warning("Nenhum produto disponível (%d na lista, %d excluídos). Reponha a planilha.",
                     len(produtos), len(excluidos))
@@ -161,8 +167,43 @@ def publicar(cfg, historico, caminho, so_rede: str | None, forcar: bool) -> int:
     return 0 if deu_certo or not resultados else 1
 
 
+REDES_EM_ATRASO = ("facebook", "instagram")
+
+
+def postar_atrasados(cfg, historico, caminho, quantidade: int) -> int:
+    """Completa Facebook e Instagram com produtos que já saíram no Telegram, `quantidade` por rede."""
+    modo = "SIMULAÇÃO (nada será postado)" if cfg.simular else "REAL"
+    log.info("Início dos atrasados. Modo: %s", modo)
+    produtos = _carregar_produtos(cfg, caminho)
+    na_origem = historico.postados_recentes(cfg.dias_sem_repetir, "telegram")
+    postou, tentou = False, False
+    for rede in REDES_EM_ATRASO:
+        if rede not in cfg.redes_ativas:
+            continue
+        fila = selecao.atrasados(produtos, cfg, na_origem, historico.postados_recentes(cfg.dias_sem_repetir, rede))
+        log.info("%s: %d produto(s) em atraso.", rede, len(fila))
+        for produto in fila[:quantidade]:
+            texto = modelos.montar(produto, rede)
+            if cfg.simular:
+                print(f"\n----- [{rede}] SIMULAÇÃO (atrasado: {produto.nome[:60]}) -----\n{texto}\n")
+                continue
+            tentou = True
+            log.info("%s: postando atrasado: %s", rede, produto.nome[:80])
+            if _postar_numa_rede(cfg, historico, produto, rede, texto) in ("ok", "incerto"):
+                postou = True
+    if postou:
+        try:
+            gerar_pagina(cfg, historico, caminho)
+        except Exception as erro:
+            log.warning("Não consegui atualizar a página do link da bio (%s).", type(erro).__name__)
+    return 0 if postou or not tentou else 1
+
+
 def main(argv=None) -> int:
     analisador = argparse.ArgumentParser(description="Bot de afiliados")
+    analisador.add_argument("--atrasados", action="store_true",
+                            help="posta no Facebook e no Instagram o que já saiu só no Telegram")
+    analisador.add_argument("--quantidade", type=int, default=1, help="com --atrasados: quantos por rede (padrão 1)")
     analisador.add_argument("--listar", action="store_true", help="mostra o que pode ser postado")
     analisador.add_argument("--testar-conexao", action="store_true", help="confere as chaves sem postar")
     analisador.add_argument("--rede", choices=list(REDES), help="usa só esta rede")
@@ -182,6 +223,8 @@ def main(argv=None) -> int:
             return listar(cfg, historico, args.produtos)
         if args.gerar_pagina:
             return gerar_pagina(cfg, historico, args.produtos, args.saida)
+        if args.atrasados:
+            return postar_atrasados(cfg, historico, args.produtos, max(1, args.quantidade))
         return publicar(cfg, historico, args.produtos, args.rede, args.forcar)
     except FileNotFoundError as erro:
         log.error("%s", erro)

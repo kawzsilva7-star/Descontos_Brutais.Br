@@ -20,6 +20,7 @@ APELIDOS = {
     "categoria": "categoria",
     "video": "video", "video_url": "video",
     "loja": "loja", "marketplace": "loja",
+    "descricao": "descricao", "descricao_curta": "descricao", "texto": "descricao",
 }
 
 
@@ -34,6 +35,7 @@ class Produto:
     categoria: str = ""
     video: str = ""
     loja: str = ""
+    descricao: str = ""
 
 
 def _sem_acento(texto: str) -> str:
@@ -122,6 +124,7 @@ def carregar(caminho: Path) -> tuple:
             categoria=dados.get("categoria", ""),
             video=dados.get("video", ""),
             loja=dados.get("loja", ""),
+            descricao=dados.get("descricao", ""),
         )
         if produto.id in vistos:
             avisos.append(f"linha {numero}: link repetido na lista, ignorada")

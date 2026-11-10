@@ -18,6 +18,8 @@ Outros comandos (sempre na pasta do projeto):
 - `-m src.main --testar-conexao` confere as chaves sem postar nada
 - `-m src.main --rede telegram` usa só uma rede
 - `-m src.main --forcar` ignora o limite de posts do dia
+- `-m src.main --atrasados` posta no Facebook e no Instagram (1 por rede, ou `--quantidade N`) o que já saiu só no Telegram, por exemplo depois de uma chave vencida. Roda sozinho às 18:30, depois dos posts normais.
+- `scripts\renovar_token_meta.py` troca o token curto do Facebook por um token de Página que não expira e grava no `.env` (copie o token no Explorador da Graph API e aperte Enter).
 
 ## Link da bio (página de produtos por categoria)
 O bot gera docs/index.html: uma página só sua, com os produtos postados nos últimos 30 dias separados por categoria (Casa, Dia a dia, Carro, Eletrônicos, Gamers, Ferramentas...). A categoria vem da coluna categoria da planilha. A legenda do Instagram manda o público para a seção certa.
@@ -36,7 +38,7 @@ O bot gera docs/index.html: uma página só sua, com os produtos postados nos ú
 2. Baixe o projeto do GitHub e entre na pasta.
 3. Copie o arquivo `.env` guardado em lugar seguro para dentro da pasta (ele **não** vai para o GitHub). Copie também `dados/produtos.csv`.
 4. No PowerShell, na pasta: `.\scripts\instalar.ps1`
-5. Teste em simulação. Depois: `.\scripts\agendar.ps1` cria as 3 tarefas diárias (08:00, 14:00, 20:00). Para outros horários: `.\scripts\agendar.ps1 -Horarios "09:00","15:00","21:00"`. Para apagar: `.\scripts\agendar.ps1 -Remover`.
+5. Teste em simulação. Depois: `.\scripts\agendar.ps1` cria as tarefas diárias: posts às 12:00 e 17:00, e às 18:30 a tarefa dos atrasados. Para outros horários: `.\scripts\agendar.ps1 -Horarios "09:00","15:00" -HorarioAtrasados "22:00"`. Para apagar: `.\scripts\agendar.ps1 -Remover`.
 
 O PC precisa estar ligado e sem suspensão nesses horários.
 

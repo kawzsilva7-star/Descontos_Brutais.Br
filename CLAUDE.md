@@ -2,6 +2,10 @@
 
 Leia `docs/ESPECIFICACAO.md` antes de qualquer coisa. Ele diz o que o bot faz, as regras e o que ainda precisa ser confirmado.
 
+Se existir a pasta `atualizacao-de-memoria/` (fica só no PC do dono, fora do GitHub), leia o `LEIA-ME.md` dela e todos os arquivos que ele manda ler: ela guarda o estado atual, os produtos e as perguntas pendentes ao dono.
+
+Se existir a pasta `ideias-do-dono/` (também só no PC do dono), leia o `LEIA-ME.md` e o `ideias.md` dela. São as ideias dele e nunca podem ser esquecidas. Quando ele contar uma ideia nova, anote lá na hora.
+
 ## Como trabalhar aqui
 - Responda em português.
 - O dono não é programador. Explique em linguagem simples e dê os comandos completos para colar.

@@ -1,5 +1,6 @@
 """Textos dos posts. Nada de inventar: só entram nome, preço e link informados pelo dono."""
 import hashlib
+import unicodedata
 
 GANCHOS = [
     "Achado do dia:",
@@ -10,7 +11,11 @@ GANCHOS = [
 ]
 
 AVISO = "📢 Publicidade: link de afiliado, posso receber comissão pela sua compra."
-LIMITE_TELEGRAM = 1000   # o Telegram aceita 1024 na legenda de foto
+AVISO_SAUDE = "⚠️ Produto ligado à saúde: tome cuidado e consulte um médico antes de usar."
+# Além da categoria "saúde", estas palavras (sem acento) no nome ou na descrição também ativam o aviso.
+PALAVRAS_DE_SAUDE = ("pressao", "suplement", "creatina", "glutamina", "whey", "vitamina", "nasal", "ortoped",
+                     "protetor solar", "remedio", "medicamento", "cápsulas", "capsulas")
+LIMITE_TELEGRAM = 1000  # o Telegram aceita 1024 na legenda de foto
 LIMITE_INSTAGRAM = 2000  # o Instagram aceita 2200
 
 
@@ -30,8 +35,23 @@ def _nome_curto(nome: str, maximo: int = 110) -> str:
     return nome if len(nome) <= maximo else nome[: maximo - 1].rstrip() + "…"
 
 
+def _sem_acento(texto: str) -> str:
+    base = unicodedata.normalize("NFKD", texto)
+    return "".join(c for c in base if not unicodedata.combining(c))
+
+
+def _e_de_saude(produto) -> bool:
+    if _sem_acento(produto.categoria or "").strip().lower() in ("saude", "saúde"):
+        return True
+    texto = _sem_acento(f"{produto.nome} {getattr(produto, 'descricao', '')}").lower()
+    return any(_sem_acento(p) in texto for p in PALAVRAS_DE_SAUDE)
+
+
 def _corpo(produto, rede: str) -> str:
-    linhas = [f"{_gancho(produto)} {_nome_curto(produto.nome)}", ""]
+    # Se o dono escreveu uma descrição curta na planilha, ela vira o título do post.
+    # Sem descrição, usa o nome do anúncio, como antes.
+    titulo = " ".join((getattr(produto, "descricao", "") or "").split()) or _nome_curto(produto.nome)
+    linhas = [f"{_gancho(produto)} {titulo}", ""]
     linhas.append(f"💰 Preço: {formatar_preco(produto.preco)} (pode mudar, confira na loja)")
     if rede == "instagram":
         # No Instagram o link da legenda não clica: manda o público para a página do link da bio.
@@ -39,8 +59,10 @@ def _corpo(produto, rede: str) -> str:
     else:
         linhas.append(f"🛒 Compre aqui: {produto.link}")
     linhas += ["", AVISO]
+    if _e_de_saude(produto):
+        linhas += ["", AVISO_SAUDE]
     if rede == "instagram":
-        linhas += ["", "#publi #achadinhos #ofertas #descontosbrutais"]
+        linhas += ["", "#publi #achadinhos #ofertas"]
     return "\n".join(linhas)
 
 

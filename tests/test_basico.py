@@ -95,6 +95,18 @@ class Historia(unittest.TestCase):
             self.assertEqual(h.posts_hoje_na_rede("instagram"), 0)
 
 
+class Atrasados(unittest.TestCase):
+    def test_so_o_que_saiu_no_telegram_e_falta_na_rede(self):
+        a, b, c = _produto(id="a"), _produto(id="b"), _produto(id="c")
+        fila = selecao.atrasados([a, b, c], _config(), na_origem={"a", "b"}, na_rede={"a"})
+        self.assertEqual([p.id for p in fila], ["b"])  # c nunca saiu no Telegram; a já saiu na rede
+
+    def test_mantem_a_ordem_da_planilha_e_barra_produto_invalido(self):
+        a, b, c = _produto(id="a"), _produto(id="b", foto=""), _produto(id="c")
+        fila = selecao.atrasados([a, b, c], _config(), na_origem={"a", "b", "c"}, na_rede=set())
+        self.assertEqual([p.id for p in fila], ["a", "c"])
+
+
 class Planilha(unittest.TestCase):
     def test_leitura_com_ponto_e_virgula_e_acentos(self):
         with tempfile.TemporaryDirectory() as pasta:
@@ -145,18 +157,21 @@ class Textos(unittest.TestCase):
 
 
 class Pagina(unittest.TestCase):
-    def test_agrupa_por_categoria_na_ordem_e_escapa_html(self):
+    def test_agrupa_por_nicho_na_ordem_e_escapa_html(self):
         from datetime import datetime
         from src.pagina.gerador import gerar_html
         agora = datetime(2026, 10, 31, 12, 0)
         itens = [
-            (_produto(id="a", nome="Fone <b>X</b>", categoria="eletronicos"), datetime(2026, 10, 30)),
-            (_produto(id="b", nome="Panela", categoria="Casa"), datetime(2026, 10, 29)),
-            (_produto(id="c", nome="Sem categoria", categoria=""), datetime(2026, 10, 28)),
+            (_produto(id="a", nome="Fone <b>X</b>", categoria=""), datetime(2026, 10, 30)),
+            (_produto(id="b", nome="Kit 5 Toalhas", categoria="casa"), datetime(2026, 10, 29)),
+            (_produto(id="c", nome="Coisa sem nicho", categoria=""), datetime(2026, 10, 28)),
+            (_produto(id="d", nome="Creatina 1kg", categoria=""), datetime(2026, 10, 27)),
         ]
         pagina = gerar_html(itens, agora)
-        self.assertLess(pagina.index('id="c-casa"'), pagina.index('id="c-eletrônicos"'))
-        self.assertLess(pagina.index('id="c-eletrônicos"'), pagina.index('id="c-outros"'))
+        self.assertLess(pagina.index("<span>Eletrônicos"), pagina.index("<span>Banho"))
+        self.assertLess(pagina.index("<span>Banho"), pagina.index("<span>Outros achados"))
+        self.assertIn("consulte um médico", pagina)  # nicho de saúde leva o aviso
+        self.assertIn("t.me/", pagina)               # botões das redes
         self.assertNotIn("<b>X</b>", pagina)       # texto da loja nunca vira HTML
         self.assertIn("Fone &lt;b&gt;X&lt;/b&gt;", pagina)
         self.assertIn("afiliado", pagina)          # aviso de publicidade na página
@@ -170,6 +185,18 @@ class Pagina(unittest.TestCase):
         texto = modelos.montar(_produto(categoria="ferramentas"), "instagram")
         self.assertIn("Clique no link da bio para comprar", texto)
         self.assertNotIn("seção", texto)
+
+    def test_nichos_pelo_nome(self):
+        from src.pagina.nichos import nicho_do_produto
+        casos = {
+            "Kit 5 em 1 Toalhas de Banho": "Banho", "Smartphone Motorola Moto G06": "Eletrônicos",
+            "Caminha Iglu para Cães": "Pet", "Coqueteleira Shaker Academia": "Academia",
+            "Mouse Gamer RGB": "Gamer", "Guarda-chuva Automático": "Dia a dia",
+            "Bolsa Térmica Marmita": "Bolsas", "Jogo 14 Potes Cozinha": "Cozinha",
+        }
+        for nome, nicho in casos.items():
+            self.assertEqual(nicho_do_produto(_produto(nome=nome, categoria="")), nicho, nome)
+        self.assertEqual(nicho_do_produto(_produto(nome="Coisa", categoria="pet")), "Pet")
 
     def test_categorias_apelidos(self):
         from src.produtos.categorias import nome_da_categoria
