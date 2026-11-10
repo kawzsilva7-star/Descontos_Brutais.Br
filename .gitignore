@@ -19,3 +19,14 @@ logs/
 dados/CONTINUACAO.md
 atualizacao-de-memoria/
 ideias-do-dono/
+
+# Videos sao pesados: ficam so no PC
+videos/*
+!videos/LEIA-ME.md
+
+# Skills: so as 3 do dono vao para o GitHub publico. As de Remotion (terceiros, licenca nao confirmada) ficam so no PC.
+skills/*
+!skills/LEIA-ME.md
+!skills/banca-de-avaliadores/
+!skills/rodada-de-tubaroes/
+!skills/video-de-produto/
