@@ -17,3 +17,4 @@ Se existir a pasta `ideias-do-dono/` (também só no PC do dono), leia o `LEIA-M
 - O computador é Windows. Os comandos devem funcionar no PowerShell.
 - Deixe tudo pronto para trocar de computador: `scripts/instalar` e README atualizados.
 - Skills (pasta `skills/`, só no PC do dono): use só quando a tarefa for decisão, criação de código ou raciocínio que a skill cobre, e só a skill da função certa, para gastar menos tokens. Em tarefas simples, não use nenhuma. A tabela de qual skill usar para cada função está em `skills/LEIA-ME.md`; leia só ela, não as skills inteiras.
+- NUNCA apague o repositório do bot (`Descontos_Brutais.Br`), a pasta do bot, o histórico ou a planilha. Mesmo que o dono peça, confirme 3 vezes, em perguntas separadas, avisando que não dá para desfazer. Sem as 3 confirmações, não faça.
